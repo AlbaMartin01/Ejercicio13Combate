@@ -2,16 +2,20 @@ package com.example.ejercicio13combate
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.widget.ContentLoadingProgressBar
 import kotlin.random.Random
 import kotlin.random.nextInt
 
 class MainActivity : AppCompatActivity() {
+    @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,9 +36,11 @@ class MainActivity : AppCompatActivity() {
 
         if (dadoEnemigoElegir == 1){
             findViewById<TextView>(R.id.vidaEnemigoNormal).visibility = View.VISIBLE
+            findViewById<ContentLoadingProgressBar>(R.id.progressBar_enemigoNormal).visibility = View.VISIBLE
             vidaEnemigo = 100
         } else if (dadoEnemigoElegir == 2){
             findViewById<TextView>(R.id.vidaEnemigoJefe).visibility = View.VISIBLE
+            findViewById<ContentLoadingProgressBar>(R.id.progressBar_enemigoJefe).visibility = View.VISIBLE
             vidaEnemigo = 200
         }
 
@@ -44,14 +50,10 @@ class MainActivity : AppCompatActivity() {
                 vidaEnemigo -= jugador1.fuerza
                 if (dadoEnemigoElegir == 1) {
                     findViewById<TextView>(R.id.vidaEnemigoNormal).setText("Vida enemigo normal: " + vidaEnemigo)
-                    var ancho = findViewById<TextView>(R.id.vidaEnemigoNormal).width
-                    ancho -= 25
-                    findViewById<TextView>(R.id.vidaEnemigoNormal).width = ancho
+                    findViewById<ContentLoadingProgressBar>(R.id.progressBar_enemigoNormal).progress -= jugador1.fuerza
                 } else if (dadoEnemigoElegir == 2){
                     findViewById<TextView>(R.id.vidaEnemigoJefe).setText("Vida jefe: " + vidaEnemigo)
-                    var ancho = findViewById<TextView>(R.id.vidaEnemigoJefe).width
-                    ancho -= 20
-                    findViewById<TextView>(R.id.vidaEnemigoJefe).width = ancho
+                    findViewById<ContentLoadingProgressBar>(R.id.progressBar_enemigoJefe).progress -= jugador1.fuerza
                 }
             } else if (dadoAtacar <= 3 && vidaEnemigo > 0){
                 Toast.makeText(this,"Ataque rechazado", Toast.LENGTH_SHORT).show()
@@ -62,13 +64,15 @@ class MainActivity : AppCompatActivity() {
                 objetos.add(obj3)
                 jugador1 = jugador(40,objetos,100)
             }
-            if (vidaJugador > 0) {
+            if (vidaJugador > 0 && vidaEnemigo > 0) {
                 if (dadoEnemigoElegir == 1) {
                     vidaJugador -= 20
                     findViewById<TextView>(R.id.vidaJugador).setText("Vida: " + vidaJugador)
+                    findViewById<ContentLoadingProgressBar>(R.id.progressBar_jugador).progress -= 20
                 } else if (dadoEnemigoElegir == 2) {
                     vidaJugador -= 30
                     findViewById<TextView>(R.id.vidaJugador).setText("Vida: " + vidaJugador)
+                    findViewById<ContentLoadingProgressBar>(R.id.progressBar_jugador).progress -= 30
                 }
             }
             if (vidaJugador <= 0){
@@ -94,6 +98,7 @@ class MainActivity : AppCompatActivity() {
             vidaJugador += 20
             jugador1 = jugador(20,objetos,0)
             findViewById<TextView>(R.id.vidaJugador).setText("Vida: " + vidaJugador)
+            findViewById<ContentLoadingProgressBar>(R.id.progressBar_jugador).progress += 20
         }
     }
 }
